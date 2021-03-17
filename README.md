@@ -7,10 +7,10 @@
 
 Endpoints
 ---
-Create a web service that will give us the weather forecast for a specific location.
+Create a web service that will give us the weather forecast for a specific location.__
 Each table has 5 columns:
 ```Longitude, Latitude, forecast time, Temperature, Precipitation```. The service will have 2 routes: 
-> **/weather/data -** ```returns the weather forecast in a specific location```
+> **/weather/data -** ```returns the weather forecast in a specific location``` __
 > **/weather/summarize -** ```returns the max,min,avg weather data (from all the files) for a specific location```
 
 
