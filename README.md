@@ -3,7 +3,7 @@
 [![forthebadge](https://forthebadge.com/images/badges/made-with-javascript.svg)](https://forthebadge.com)
 
 
-> The Weather Forecast Database project written in Node.JS has a MySQL database for manage weather station data.
+> The Weather Forecast Database project written in Node.JS has a SQLite database for manage weather station data.
 
 Endpoints
 ---
@@ -23,6 +23,7 @@ Node.JS Weather Forecast Database App is open-sourced software.
 
 Heroku link
 ---
+https://candidate-weather-forecast.herokuapp.com/
 
 
 
