@@ -43,20 +43,20 @@ const getMinMaxValues= (arr) => {
     }), { min: arr[0], max: arr[0] });
   }
 
-  const printJsonForecast = (forecastTime, temperature, precipitation) => {
+  const JsonifyForecast = (forecast_time, temperature, precipitation) => {
     return JSON.stringify({ 
-      "forecastTime": forecastTime, 
+      "forecastTime": forecast_time, 
       "Temperature": temperature, 
       "Precipitation": precipitation
     });
   }
 
 //Retrieving date from tables
-const weatherForecastDataFromTable = async(numberTable, lon, lat, response) => {
-  var query = "SELECT * FROM file" + numberTable + " WHERE Longitude = ? AND Latitude = ?"
-  const forecastResult = new Array()
+const weatherForecastDataFromTable = async(number_table, lon, lat, response) => {
+  var query = "SELECT * FROM file" + number_table + " WHERE Longitude = ? AND Latitude = ?"
+  const forecast_result = new Array()
   await new Promise((resolve, reject) => {
-    database_tables[numberTable-1].all(query, [lon, lat], function(err, results) {
+    database_tables[number_table-1].all(query, [lon, lat], function(err, results) {
           if (err) {
               console.log(err);
               return response.status(500).json();
@@ -66,19 +66,19 @@ const weatherForecastDataFromTable = async(numberTable, lon, lat, response) => {
               return response.end(JSON.stringify({ error: "Location Not Found..." }));
           } 
           results.forEach((result) => {
-            forecastResult.push(result.forecast_time)
-            forecastResult.push(result.Temperature_Celsius)
-            forecastResult.push(result.Precipitation_Rate_mmhr)
+            forecast_result.push(result.forecast_time)
+            forecast_result.push(result.Temperature_Celsius)
+            forecast_result.push(result.Precipitation_Rate_mmhr)
           })
           resolve();
       });
   })
-  return forecastResult;
+  return forecast_result;
 }
 
 module.exports = {
   weatherForecastDataFromTable,
-  printJsonForecast,
+  JsonifyForecast,
   getMinMaxValues,
   getAvgValue,
   isEmpty

@@ -11,9 +11,9 @@ Create a web service that will give us the weather forecast for a specific locat
 Each table has 5 columns:
 ```Longitude, Latitude, forecast time, Temperature, Precipitation```. \
 The service will have 2 routes: 
-> **/weather/data -** ```returns the weather forecast in a specific location``` 
+> **/weather/data/Longitude/Latitude -** ```returns the weather forecast in a specific location``` 
 \
-> **/weather/summarize -** ```returns the max,min,avg weather data (from all the files) for a specific location```
+> **/weather/summarize/Longitude/Latitude -** ```returns the max,min,avg weather data (from all the files) for a specific location```
 
 
 License
@@ -23,7 +23,9 @@ Node.JS Weather Forecast Database App is open-sourced software.
 
 Heroku link
 ---
-https://candidate-weather-forecast.herokuapp.com/
+https://candidate-weather-forecast.herokuapp.com/weather/data/-180/-90
+https://candidate-weather-forecast.herokuapp.com/weather/summarize/-180/-90
+
 
 
 
