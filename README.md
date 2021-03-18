@@ -23,7 +23,7 @@ Node.JS Weather Forecast Database App is open-sourced software.
 
 Heroku link
 ---
-https://candidate-weather-forecast.herokuapp.com/weather/data/-180/-90
+https://candidate-weather-forecast.herokuapp.com/weather/data/-180/-90 \
 https://candidate-weather-forecast.herokuapp.com/weather/summarize/-180/-90
 
 
