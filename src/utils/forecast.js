@@ -1,30 +1,57 @@
-const mysql = require('mysql')
+const sqlite3 = require('sqlite3').verbose();
+const db_file = []
+// Setup the database connection
+db_file[1] = new sqlite3.Database("file1", err => {
+  if (err) {
+    return console.error(err.message);
+  }
+  console.log("Connected to the in-memory SQLite database table file1.");
+});
 
-// Create connection
-// const db = mysql.createPool({
-//   host: 'us-cdbr-east-03.cleardb.com',
-//   user: 'ba7ed8a7b42e3e',
-//   password: 'c4e4f421',
-//   database: 'heroku_e2c8bd264f11a5e'
-// });
-
-// Create connection
-const mysqlConnection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'clima_cell_assignment'
-  })
-
-mysqlConnection.on('error', err => {
-    if (err.code === 'PROTOCOL_CONNECTION_LOST') {
-        // db error reconnect
-        handleDisconnect();
-    } else {
-        throw err;
+db_file[2] = new sqlite3.Database("file2", err => {
+    if (err) {
+      return console.error(err.message);
     }
-    console.log('Database connected!');
-})
+    console.log("Connected to the in-memory SQLite database table file2.");
+});
+
+db_file[3] = new sqlite3.Database("file3", err => {
+if (err) {
+    return console.error(err.message);
+}
+console.log("Connected to the in-memory SQLite database table file3.");
+});
+
+//Retrieving All Rows
+async function getAllFile() {
+  await new Promise((resolve, reject) => {
+      db_file1.all("SELECT * FROM file1 WHERE Longitude = -180 AND Latitude = -90", async(error, rows) => {
+          if (error) throw error;
+              rows.forEach((row) => {
+                  console.log(row.forecast_time + " " + row.Temperature_Celsius);
+              })
+          })
+      resolve();
+  });
+}
+
+// Create connection
+// const mysqlConnection = mysql.createConnection({
+//     host: 'localhost',
+//     user: 'root',
+//     password: '',
+//     database: 'clima_cell_assignment'
+//   })
+
+// mysqlConnection.on('error', err => {
+//     if (err.code === 'PROTOCOL_CONNECTION_LOST') {
+//         // db error reconnect
+//         handleDisconnect();
+//     } else {
+//         throw err;
+//     }
+//     console.log('Database connected!');
+// })
 
 const isEmpty = (value) => (
     value === undefined ||
@@ -54,31 +81,35 @@ const getMinMaxValues= (arr) => {
     });
   }
 
-const getWeatherForecastData = async(tableNum, lon, lat, response) => {
-    const forecastResult = new Array()
-    await new Promise((resolve, reject) => {
-        mysqlConnection.query('SELECT * FROM file? WHERE Longitude = ? AND Latitude = ?', [tableNum, lon, lat], function(err, results) {
-            if (err) {
-                console.log(err);
-                return response.status(500).json();
-            }
-            if (isEmpty(results)) {
-                console.log("Result empty");
-                return response.end(JSON.stringify({ error: "Location Not Found..." }));
-            } 
-            forecastResult.push(results[0].forecast_time)
-            forecastResult.push(results[0].Temperature_Celsius)
-            forecastResult.push(results[0].Precipitation_Rate_mmhr)
-            resolve();
-        });
-    })
-    return forecastResult;
+//Retrieving date from tables
+const weatherForecastDataFromTable = async(numberTable, lon, lat, response) => {
+  var query = "SELECT * FROM file" + numberTable + " WHERE Longitude = ? AND Latitude = ?"
+  const forecastResult = new Array()
+  await new Promise((resolve, reject) => {
+    db_file[numberTable].all(query, [lon, lat], function(err, results) {
+          if (err) {
+              console.log(err);
+              return response.status(500).json();
+          }
+          if (isEmpty(results)) {
+              console.log("Result empty");
+              return response.end(JSON.stringify({ error: "Location Not Found..." }));
+          } 
+          results.forEach((result) => {
+            forecastResult.push(result.forecast_time)
+            forecastResult.push(result.Temperature_Celsius)
+            forecastResult.push(result.Precipitation_Rate_mmhr)
+          })
+          resolve();
+      });
+  })
+  return forecastResult;
 }
 
 module.exports = {
-    getWeatherForecastData,
-    printJsonForecast,
-    getMinMaxValues,
-    getAvgValue,
-    isEmpty
+  weatherForecastDataFromTable,
+  printJsonForecast,
+  getMinMaxValues,
+  getAvgValue,
+  isEmpty
 }

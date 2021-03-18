@@ -1,29 +1,27 @@
 const path = require('path')
 const express = require('express')
-const { getWeatherForecastData, printJsonForecast, getMinMaxValues, getAvgValue, isEmpty } = require('./utils/forecast')
+const { weatherForecastDataFromTable, printJsonForecast, getMinMaxValues, getAvgValue, isEmpty } = require('./utils/forecast')
 
 const app = express()
 const port = process.env.PORT || 3000
 
-// Handling with multiple tables
-//var connection = mysqlConnection.createConnection({multipleStatements: true});
 
 // Interaction task check connection with first table
 app.get('/', async(req, res) => {
-    let weatherForecastArray = await getWeatherForecastData(1, -180.0, -90.0, res)
-    let jsonString = printJsonForecast(weatherForecastArray[0], weatherForecastArray[1], weatherForecastArray[2])
-    res.writeHead(200, {"Content-Type": "application/json"});
-    res.end(jsonString);
-})
-// Interaction task check connection with second table
-app.get('/weather', async(req, res) => {
-    let weatherForecastArray = await getWeatherForecastData(2, -180.0, -90.0, res)
+    let weatherForecastArray = await weatherForecastDataFromTable(1, -180.0, -90.0, res)
     let jsonString = printJsonForecast(weatherForecastArray[0], weatherForecastArray[1], weatherForecastArray[2])
     res.writeHead(200, {"Content-Type": "application/json"});
     res.end(jsonString);
 })
 
-// http://localhost:3000/weather/data/-180/-90
+app.get('/weather', async(req, res) => {
+    let weatherForecastArray = await weatherForecastDataFromTable(1, -180.0, -90.0, res)
+    let jsonString = printJsonForecast(weatherForecastArray[0], weatherForecastArray[1], weatherForecastArray[2])
+    res.writeHead(200, {"Content-Type": "application/json"});
+    res.end(jsonString);
+})
+
+// /weather/data/-180/-90
 app.get('/weather/data/:lon/:lat', async(req, res) => {
     if (!req.params.lon || !req.params.lat){
         JSON.stringify({ "error": "Please check again, you need to add Longitude AND Latitude." })
@@ -31,14 +29,14 @@ app.get('/weather/data/:lon/:lat', async(req, res) => {
     let jsonString = ""
     let weatherForecastArray = new Array()
     for (var i = 1; i < 4; i++) {
-        weatherForecastArray = await getWeatherForecastData(i, req.params.lon, req.params.lat, res);
+        weatherForecastArray = await weatherForecastDataFromTable(i, req.params.lon, req.params.lat, res);
         jsonString += printJsonForecast(weatherForecastArray[0], weatherForecastArray[1], weatherForecastArray[2])
     }
     res.writeHead(200, {"Content-Type": "application/json"});
     res.end(jsonString);
 })
 
-// http://localhost:3000/weather/summarize/-180/-90
+// /weather/summarize/-180/-90
 app.get('/weather/summarize/:lon/:lat', async(req, res) => {
     if (!req.params.lon || !req.params.lat){
         JSON.stringify({ "error": "Please check again, you need to add Longitude AND Latitude." })
@@ -50,7 +48,7 @@ app.get('/weather/summarize/:lon/:lat', async(req, res) => {
     let temperatureAvg;
     let precipitatioAvg;
     for (var i = 1; i < 4; i++) {
-        weatherForecastArray[i-1] = await getWeatherForecastData(i, req.params.lon, req.params.lat, res)
+        weatherForecastArray[i-1] = await weatherForecastDataFromTable(i, req.params.lon, req.params.lat, res)
     }
     temperatureMinMax = getMinMaxValues([weatherForecastArray[0][1], weatherForecastArray[1][1], weatherForecastArray[2][1]])
     precipitatioMinMax = getMinMaxValues([weatherForecastArray[0][2], weatherForecastArray[1][2], weatherForecastArray[2][2]])
