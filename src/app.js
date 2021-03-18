@@ -63,8 +63,9 @@ app.get('/weather/summarize/:lon/:lat', async(req, res) => {
         "Precipitation": precipitatio_min_max.min
     },
     "avg": {
-        "Temperature": temperature_avg.toString().match(/\d+\.\d{2}/)[0],
-        "Precipitation": precipitatio_avg.toString().match(/\d+\.\d{2}/)[0]
+
+        "Temperature": (temperature_avg.toString().indexOf('.') > 0) ? temperature_avg.toString().match(/\d+\.\d{2}/)[0] : temperature_avg.toString(),
+        "Precipitation": (precipitatio_avg.toString().indexOf('.') > 0) ? precipitatio_avg.toString().match(/\d+\.\d{2}/)[0] : precipitatio_avg.toString()
     }
     })
     res.writeHead(200, {"Content-Type": "application/json"});
